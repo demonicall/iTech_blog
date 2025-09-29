@@ -1,0 +1,48 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator
+from django.contrib import messages
+from .models import Post, Comment
+
+def home(request):
+    post_list = Post.objects.filter(published=True).order_by('-created_at')
+    paginator = Paginator(post_list, 5)  # Show 5 posts per page
+    page = request.GET.get('page')
+    posts = paginator.get_page(page)
+    return render(request, 'index.html', {'posts': posts})
+
+def post_detail(request, slug):
+    post = get_object_or_404(Post, slug=slug, published=True)
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        body = request.POST.get('body')
+        
+        if name and email and body:
+            Comment.objects.create(
+                post=post,
+                name=name,
+                email=email,
+                body=body
+            )
+            messages.success(request, 'Your comment has been submitted and is awaiting approval!')
+            return redirect('post_detail', slug=post.slug)
+    
+    return render(request, 'post.html', {'post': post})
+
+def about(request):
+    return render(request, 'about.html')
+
+def contact(request):
+    if request.method == 'POST':
+        # Handle contact form submission
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        message = request.POST.get('message')
+        
+        # Here you can save to database or send email
+        messages.success(request, 'Thank you for your message! We will get back to you soon.')
+        return redirect('contact')
+    
+    return render(request, 'contact.html')

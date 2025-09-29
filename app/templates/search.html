@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<!-- Page Header-->
+<header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Search Results</h1>
+                    <span class="subheading">
+                        {% if query %}
+                            Results for "{{ query }}"
+                        {% else %}
+                            Enter a search term
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <!-- Search Form -->
+            <div class="mb-5">
+                <form action="{% url 'search' %}" method="get" class="d-flex">
+                    <input class="form-control me-2" type="search" name="q" value="{{ query|default:'' }}" placeholder="Search posts..." aria-label="Search">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+            </div>
+
+            {% if query %}
+                {% if posts %}
+                    <p class="text-muted">{{ posts|length }} result{{ posts|length|pluralize }} found</p>
+                    
+                    {% for post in posts %}
+                    <!-- Post preview-->
+                    <div class="post-preview">
+                        <a href="{% url 'post_detail' post.slug %}">
+                            <h2 class="post-title">{{ post.title }}</h2>
+                            <h3 class="post-subtitle">
+                                {% if post.content|length > 150 %}
+                                    {{ post.content|slice:":150" }}...
+                                {% else %}
+                                    {{ post.content }}
+                                {% endif %}
+                            </h3>
+                        </a>
+                        <p class="post-meta">
+                            Posted by {{ post.author.username }} on {{ post.created_at|date:"F d, Y" }}
+                            {% if post.category %}
+                            in <a href="{% url 'category' post.category.slug %}">{{ post.category.name }}</a>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <!-- Divider-->
+                    <hr class="my-4" />
+                    {% endfor %}
+                {% else %}
+                    <!-- No results message -->
+                    <div class="post-preview text-center">
+                        <h3 class="post-title">No posts found.</h3>
+                        <p class="post-subtitle">Try different search terms or browse all posts.</p>
+                        <a href="{% url 'post_list' %}" class="btn btn-primary mt-3">View All Posts</a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <!-- No search term entered -->
+                <div class="post-preview text-center">
+                    <h3 class="post-title">Enter a search term</h3>
+                    <p class="post-subtitle">Use the search box above to find posts.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

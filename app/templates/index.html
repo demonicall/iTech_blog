@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - My Blog{% endblock %}
+
+{% block content %}
+<!-- Page Header-->
+<header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>My Clean Blog</h1>
+                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            {% for post in posts %}
+            <!-- Post preview-->
+            <div class="post-preview">
+                <a href="{% url 'post_detail' post.slug %}">
+                    <h2 class="post-title">{{ post.title }}</h2>
+                    {% if post.content|length > 150 %}
+                    <h3 class="post-subtitle">{{ post.content|slice:":150" }}...</h3>
+                    {% else %}
+                    <h3 class="post-subtitle">{{ post.content }}</h3>
+                    {% endif %}
+                </a>
+                <p class="post-meta">
+                    Posted by
+                    <a href="#!">{{ post.author.username }}</a>
+                    on {{ post.created_at|date:"F d, Y" }}
+                    {% if post.category %}
+                    in <a href="#!">{{ post.category.name }}</a>
+                    {% endif %}
+                </p>
+            </div>
+            <!-- Divider-->
+            <hr class="my-4" />
+            {% empty %}
+            <div class="post-preview">
+                <h2 class="post-title">No posts yet.</h2>
+                <p class="post-meta">Check back later for new content!</p>
+            </div>
+            {% endfor %}
+            
+            <!-- Pager-->
+            {% if posts.has_other_pages %}
+            <div class="d-flex justify-content-end mb-4">
+                {% if posts.has_previous %}
+                <a class="btn btn-primary text-uppercase me-2" href="?page={{ posts.previous_page_number }}">Newer Posts</a>
+                {% endif %}
+                {% if posts.has_next %}
+                <a class="btn btn-primary text-uppercase" href="?page={{ posts.next_page_number }}">Older Posts →</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
