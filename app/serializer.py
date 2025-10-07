@@ -14,8 +14,8 @@ class TagSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = "__all__"
-        read_only_fields = ["created_at"]
+        fields = ['id', 'email', 'body', 'created_at', 'approved']
+        read_only_fields = ['approved', 'created_at']
 
 class PostSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)

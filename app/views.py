@@ -1,10 +1,14 @@
 from rest_framework import viewsets, generics, permissions, filters
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Category, Tag, Post, Comment
+from .models import Category, Tag, Post, Comment, Contact
 from .serializer import *
 from django.core.paginator import Paginator
 from .forms import CommentForm
 from django.db.models import Q
+from django.contrib import messages
+
+from django.http import HttpResponse
+from django.template.loader import get_template
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
@@ -46,24 +50,33 @@ def post_list(request):
     page_obj = paginator.get_page(page_number)
     return render(request, "post_list.html", {"page_obj": page_obj})
 
+
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug, published=True)
     comments = post.comment_set.filter(approved=True)
 
     if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            new_comment = form.save(commit=False)
-            new_comment.post = post
-            new_comment.save()
-            return redirect('post_detail', slug=slug)
-    else:
-        form = CommentForm()
+        if request.user.is_authenticated:
+            body = request.POST.get('body')
+            if body and body.strip():
+                Comment.objects.create(
+                    post=post,
+                    email=request.user.email,
+                    body=body.strip(),
+                    approved=False
+                )
+                messages.success(request, 'Your comment has been submitted and is awaiting approval.')
+            else:
+                messages.error(request, 'Comment cannot be empty.')
+        else:
+            messages.error(request, 'You need to be logged in to comment.')
+
+        return redirect('post_detail', slug=slug)
 
     return render(
         request,
-        "post_detail.html",
-        {"post": post, "comments": comments, "form": form}
+        "post.html",
+        {"post": post, "comments": comments}
     )
 
 def category_view(request, slug):
@@ -87,12 +100,27 @@ def search_view(request):
 def about(request):
     return render(request, "about.html")
 
+
 def contact(request):
     if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        message = request.POST.get("message")
-        messages.success(request, "Thank you for your message! We will get back to you soon.")
-        return redirect("contact")
+        if request.user.is_authenticated:
+            message = request.POST.get("message")
+            if message:
+                Contact.objects.create(
+                    email=request.user.email,
+                    message=message
+                )
+                messages.success(request, "Thank you for your message! We will get back to you soon.")
+            else:
+                messages.error(request, "Message cannot be empty.")
+            return redirect("contact")
+        else:
+            messages.error(request, "You need to be logged in to send a message.")
+            return redirect("account_login")
 
     return render(request, "contact.html")
+
+def signup_form_context(request):
+    return {
+        'post_data': request.POST if request.method == 'POST' else None
+    }

@@ -28,18 +28,13 @@
                 <div class="post-preview">
                     <a href="{% url 'post_detail' post.slug %}">
                         <h2 class="post-title">{{ post.title }}</h2>
-                        <h3 class="post-subtitle">
-                            {% if post.content|length > 150 %}
-                                {{ post.content|slice:":150" }}...
-                            {% else %}
-                                {{ post.content }}
-                            {% endif %}
-                        </h3>
+                        <h3 class="post-subtitle">{{ post.content|striptags|truncatewords:30 }}</h3>
                     </a>
                     <p class="post-meta">
                         Posted by
                         <a href="#!">{{ post.author.username }}</a>
                         on {{ post.created_at|date:"F d, Y" }}
+                        | Comments: {{ post.comment_set.count }}
                     </p>
 
                     <!-- Tags -->

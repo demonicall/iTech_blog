@@ -27,13 +27,7 @@
             <div class="post-preview">
                 <a href="{% url 'post_detail' post.slug %}">
                     <h2 class="post-title">{{ post.title }}</h2>
-                    <h3 class="post-subtitle">
-                        {% if post.content|length > 150 %}
-                            {{ post.content|slice:":150" }}...
-                        {% else %}
-                            {{ post.content }}
-                        {% endif %}
-                    </h3>
+                    <h3 class="post-subtitle">{{ post.content|striptags|truncatewords:30 }}</h3>
                 </a>
                 <p class="post-meta">
                     Posted by
@@ -42,6 +36,7 @@
                     {% if post.category %}
                     in <a href="{% url 'category' post.category.slug %}">{{ post.category.name }}</a>
                     {% endif %}
+                    | Comments: {{ post.comment_set.count }}
                 </p>
 
                 <!-- Tags -->
@@ -57,6 +52,11 @@
             </div>
             <!-- Divider-->
             <hr class="my-4" />
+            {% empty %}
+            <div class="post-preview">
+                <h2 class="post-title">No posts found.</h2>
+                <p class="post-meta">Check back later for new content!</p>
+            </div>
             {% endfor %}
 
             <!-- Pagination -->

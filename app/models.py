@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from ckeditor.fields import RichTextField
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -28,8 +29,8 @@ class Tag(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=200)
     slug = models.CharField(max_length=100, unique=True, blank=True)
-    content = models.TextField()
-    image = models.ImageField(upload_to="", blank=True, null=True)
+    content = RichTextField()
+    featured_image = models.ImageField(upload_to="featured_images/", blank=True, null=True, verbose_name="Header Background Image")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
@@ -47,12 +48,28 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
     email = models.EmailField()
     body = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
-    class Meta:
-        ordering = ["created_at"]
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return f"Comment by {self.name} on {self.post}"
+        return f"Comment by {self.email} on {self.post.title}"
+
+
+class Contact(models.Model):
+    email = models.EmailField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Contact Message"
+        verbose_name_plural = "Contact Messages"
+
+    def __str__(self):
+        if self.email is None:
+            return f"Message from No email - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+        return f"Message from {self.email} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+

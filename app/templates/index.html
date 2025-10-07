@@ -10,8 +10,8 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>My Clean Blog</h1>
-                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
+                    <h1>iTech Blog</h1>
+                    <span class="subheading"></span>
                 </div>
             </div>
         </div>
@@ -26,18 +26,14 @@
             <div class="post-preview">
                 <a href="{% url 'post_detail' post.slug %}">
                     <h2 class="post-title">{{ post.title }}</h2>
-                    {% if post.content|length > 150 %}
-                    <h3 class="post-subtitle">{{ post.content|slice:":150" }}...</h3>
-                    {% else %}
-                    <h3 class="post-subtitle">{{ post.content }}</h3>
-                    {% endif %}
+                    <h3 class="post-subtitle">{{ post.content|striptags|truncatewords:30 }}</h3>
                 </a>
                 <p class="post-meta">
                     Posted by
                     <a href="#!">{{ post.author.username }}</a>
                     on {{ post.created_at|date:"F d, Y" }}
                     {% if post.category %}
-                    in <a href="#!">{{ post.category.name }}</a>
+                    in <a href="{% url 'category' post.category.slug %}">{{ post.category.name }}</a>
                     {% endif %}
                 </p>
             </div>

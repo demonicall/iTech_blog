@@ -1,0 +1,20 @@
+SECRET_KEY=
+
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+DB_HOST=
+DB_PORT=
+
+RESEND_API_KEY=
+DEFAULT_FROM_EMAIL=
+SERVER_EMAIL=
+SITE_NAME=
+SITE_DOMAIN=
+
+----------test qilib ko'rish uchun:--------------------------------------------------------------
+RESEND_API_KEY=resend_api_key
+DEFAULT_FROM_EMAIL=onboarding@resend.dev
+SERVER_EMAIL=onboarding@resend.dev
+SITE_NAME=iTech Blog
+SITE_DOMAIN=/
