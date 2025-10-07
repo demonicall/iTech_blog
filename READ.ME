@@ -1,0 +1,47 @@
+----------------------------------iTech Blog site-----------------------------------------------------------
+
+Asosiy Sahifalar:
+
+    /admin/
+        1. admin panel
+
+    /:
+        1. Account - registratsiya qilish
+        2. Home - so'nggi postlar
+        3. All Posts - barcha postlar
+        4. About - biz haqimizda
+        5. Contact - adminga ulanish
+        6. Categories - eng mashxur kategoriyalar
+        7. Tags - eng mashxur taglar
+
+    /post/post_name/:
+        1. to'liq post
+        2. komentariya bo'limi
+
+    /account/login/:
+        1. login bo'limi (userlar uchun)
+
+    /account/signup/:
+        1. registratsiya bo'limi (userlar uchun)
+
+
+------------------------------Ishga tushirishdan oldin to'girlansin-------------------------------------------
+
+1. requirements.txt faylidan barcha kutubxonalarni o'tkazish
+
+2. a) user register/login bo'limi uchun resend.com dan foydalanish va ma'lumotlarni olish
+   b) itechblog/project/settings.py, email bo'limida qo'lda verifikatsiyaga o'tkazish
+
+3. env exampledan foydalangan holda .env yaratish
+
+4. migratsiya qilish:
+    python manage.py makemigrations
+    python manage.py migrate
+
+5. admin user yaratish:
+    python manage.py createsuperuser
+
+
+
+
+
