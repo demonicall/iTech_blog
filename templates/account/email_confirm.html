@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #c8c8c8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 600px;
+            min-height: 450px;
+            position: relative;
+            background: url(https://raw.githubusercontent.com/khadkamhn/day-01-login-form/master/img/bg.jpg) no-repeat center;
+            background-size: cover;
+            box-shadow: 0 12px 15px 0 rgba(0,0,0,.24), 0 17px 50px 0 rgba(0,0,0,.19);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .login-content {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            padding: 70px 50px 50px 50px;
+            background: rgba(40,57,101,.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .confirm-title {
+            color: white;
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .confirm-message {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .email-address {
+            color: #1161ee;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 15px 0;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+        }
+
+        .confirm-button {
+            background: #1161ee;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            background: rgba(255,107,107,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,107,107,0.3);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-content">
+            {% if confirmation %}
+                <h1 class="confirm-title">Confirm Email Address</h1>
+                <div class="confirm-message">
+                    <p>Please confirm that this email address belongs to you:</p>
+                    <div class="email-address">{{ confirmation.email_address.email }}</div>
+                    <p>Click the button below to verify your email and activate your account.</p>
+                </div>
+
+                <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                    {% csrf_token %}
+                    <button type="submit" class="confirm-button">Confirm Email Address</button>
+                </form>
+            {% else %}
+                <h1 class="confirm-title" style="color: #ff6b6b;">Invalid or Expired Link</h1>
+                <div class="error-message">
+                    <p>This email confirmation link has expired or is invalid.</p>
+                    <p>Please try signing up again or request a new confirmation email.</p>
+                </div>
+                <a href="{% url 'account_login' %}" class="confirm-button" style="text-decoration: none; display: inline-block;">Back to Login</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
